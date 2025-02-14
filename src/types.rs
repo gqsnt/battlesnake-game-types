@@ -3,10 +3,12 @@ use crate::wire_representation::{Game, Position};
 use rand::Rng;
 use serde::{Deserialize, Serialize, Serializer};
 use std::borrow::Borrow;
+use std::cell::Cell;
 use std::collections::HashMap;
 use std::fmt::{self, Debug};
 use std::hash::Hash;
 use std::time::Duration;
+use crate::compact_representation::{CellIndex, CellNum};
 
 /// Represents the snake IDs for a given game. This should be established once on the `/start` request and then
 /// stored, so that `SnakeIds` are stable throughout the game.
@@ -464,6 +466,11 @@ pub trait EmptyCellGettableGame: PositionGettableGame {
     fn get_empty_cells(&self) -> Box<dyn Iterator<Item = Self::NativePositionType> + '_>;
 }
 
+
+pub trait GetCell: PositionGettableGame{
+    fn get_cell(&self, pos: Self::NativePositionType) -> &Self::NativePositionType ;
+}
+
 /// A game that can place food following the standard rules
 ///
 /// - If the number of Food on the board is less than the minimum spawn enough food to reach the miniumum.
@@ -471,9 +478,9 @@ pub trait EmptyCellGettableGame: PositionGettableGame {
 /// - Otherwise no food spawns
 ///
 /// - When food spawns place it randomly on the empty cells of the board
-pub trait StandardFoodPlaceableGame {
+pub trait StandardFoodPlaceableGame<T:CellNum> {
     /// place food on the board according to the standard rules
-    fn place_food(&mut self, rng: &mut impl Rng);
+    fn place_food(&mut self, cell_index:CellIndex<T>);
 }
 
 #[cfg(test)]

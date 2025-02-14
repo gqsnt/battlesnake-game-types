@@ -466,30 +466,10 @@ impl<T: CN, D: Dimensions, const BOARD_SIZE: usize, const MAX_SNAKES: usize> Emp
 }
 
 impl<T: CN, D: Dimensions, const BOARD_SIZE: usize, const MAX_SNAKES: usize>
-    StandardFoodPlaceableGame for CellBoard<T, D, BOARD_SIZE, MAX_SNAKES>
+    StandardFoodPlaceableGame<T> for CellBoard<T, D, BOARD_SIZE, MAX_SNAKES>
 {
-    fn place_food(&mut self, rng: &mut impl rand::Rng) {
-        // TODO: Get these constants from the game
-        let min_food = 1;
-        let food_spawn_chance = 0.15;
-
-        // This is an optimization when min_food is 1. We know we don't need to spawn food if there if any of the board
-        // so we can short circuit on the first food we find
-        let food_to_add = if !self.cells.iter().any(|c| c.is_food()) {
-            min_food
-        } else {
-            usize::from(rng.gen_bool(food_spawn_chance))
-        };
-
-        if food_to_add == 0 {
-            return;
-        }
-
-        let empty = self.get_empty_cells();
-        let random = empty.choose_multiple(rng, food_to_add);
-        for pos in random {
-            self.cells[pos.0.as_usize()].set_food();
-        }
+    fn place_food(&mut self, cell_index: CellIndex<T>) {
+        self.cells[cell_index.0.as_usize()].set_food();
     }
 }
 

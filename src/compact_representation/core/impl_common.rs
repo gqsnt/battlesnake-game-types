@@ -224,10 +224,10 @@ macro_rules! impl_common_board_traits {
         }
 
         impl<T: CN, D: Dimensions, const BOARD_SIZE: usize, const MAX_SNAKES: usize>
-            StandardFoodPlaceableGame for $type<T, D, BOARD_SIZE, MAX_SNAKES>
+            StandardFoodPlaceableGame<T> for $type<T, D, BOARD_SIZE, MAX_SNAKES>
         {
-            fn place_food(&mut self, rng: &mut impl rand::Rng) {
-                self.embedded.place_food(rng)
+            fn place_food(&mut self, cell_index:CellIndex<T>) {
+                self.embedded.place_food(cell_index)
             }
         }
     };
